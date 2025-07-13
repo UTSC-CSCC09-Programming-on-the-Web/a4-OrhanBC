@@ -1,0 +1,182 @@
+/* css variables added by co-pilot with theh prompt: */
+/* "can you make the design more elegant?" */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --primary-color: #ff620a;
+  --primary-light: #ffded0;
+  --primary-dark: #d44c00;
+  --text-dark: #2c2e33;
+  --text-light: #ffffff;
+  --gray-light: #f9f9f9;
+  --gray-medium: #e6e6e6;
+  --gray-dark: #999;
+  --danger: #e74c3c;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition-speed: 0.3s;
+  --border-radius: 8px;
+}
+
+html {
+  overflow: -moz-scrollbars-vertical;
+  scroll-behavior: smooth;
+}
+
+/* all animations, transitions, and hover effects etc. are added by copilot with the prompt: */
+/* "can you make the design more elegant?" */
+
+body {
+  background: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-dark);
+  text-align: left;
+  margin: auto;
+  max-width: 1200px;
+  padding: 0 16px;
+}
+
+header {
+  background-color: var(--primary-color);
+  display: flex;
+  padding: 0 20px;
+  height: 70px;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: var(--border-radius);
+  margin-top: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+header #title {
+  color: var(--text-light);
+  text-decoration: none;
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: transform var(--transition-speed);
+}
+
+header #title:hover {
+  transform: translateY(-2px);
+}
+
+footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.hidden {
+  opacity: 0 !important;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--transition-speed) ease,
+    max-height 0.5s ease;
+}
+
+.animatable {
+  opacity: 1;
+  max-height: 1000px;
+  transition:
+    opacity var(--transition-speed) ease,
+    max-height 0.5s ease;
+}
+
+.btn {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  transition: all var(--transition-speed);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-outline {
+  border: 1px solid white;
+}
+
+.btn-cancel {
+  background-color: #f0f0f0;
+  color: black;
+}
+
+.btn-cancel:hover {
+  background-color: var(--gray-medium);
+  color: var(--text-dark);
+  transform: translateY(-2px);
+}
+
+.btn-delete {
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  text-align: center;
+  align-items: center;
+  background-color: white;
+  transition: all var(--transition-speed);
+}
+
+.btn-delete:hover {
+  background-color: white;
+  color: var(--danger);
+  transform: translateY(-2px);
+}
+
+.delete-icon {
+  background-image: url("../media/delete.png");
+  margin-right: 3px;
+  transition: transform var(--transition-speed);
+}
+
+.btn-delete .delete-icon {
+  width: 20px;
+  height: 20px;
+  background-size: 100%;
+  display: inline-block;
+}
+
+#error-box {
+  color: var(--danger);
+  visibility: hidden;
+  padding: 10px 15px;
+  border-radius: var(--border-radius);
+  background-color: rgba(231, 76, 60, 0.1);
+  border-left: 3px solid var(--danger);
+  margin: 16px 0;
+  font-weight: 500;
+  transform: translateY(-10px);
+  opacity: 0;
+  transition: all var(--transition-speed);
+}
+
+.credits {
+  text-align: center;
+}
+
+#error-box.visible {
+  visibility: visible;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+#error-box::before {
+  content: "Error: ";
+  font-weight: 600;
+}

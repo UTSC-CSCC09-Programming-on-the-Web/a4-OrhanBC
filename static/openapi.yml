@@ -1,0 +1,660 @@
+# OpenAPI Specification for Photo Gallery API
+openapi: 3.0.0
+info:
+  title: Photo Gallery API
+  description: |
+    API for managing a photo gallery with images and comments. 
+    Features include:
+    - Cursor-based pagination for images and comments
+    - Comprehensive input validation
+    - RESTful resource hierarchy
+    - Proper error responses
+  version: 1.1.0
+
+servers:
+  - url: /api
+    description: API base URL
+
+tags:
+  - name: Images
+    description: Operations related to images in the gallery
+  - name: Comments
+    description: Operations related to comments on images
+
+paths:
+  /images:
+    post:
+      summary: Upload a new image
+      description: Add a new image to the gallery
+      tags:
+        - Images
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Title of the image
+                author:
+                  type: string
+                  description: Author of the image
+                image:
+                  type: string
+                  format: binary
+                  description: Image file to upload
+              required:
+                - title
+                - author
+                - image
+      responses:
+        "201":
+          description: Image successfully uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "422":
+          description: Validation error - missing or invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: Failed to upload image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    get:
+      summary: Get images with pagination
+      description: Retrieve a paginated list of images with cursor-based pagination
+      tags:
+        - Images
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+          description: Maximum number of images to return
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Cursor for pagination (ID of last seen image)
+        - name: latest
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Get only the latest image if true
+      responses:
+        "200":
+          description: Paginated list of images
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedImages"
+        "422":
+          description: Validation error - invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: Failed to retrieve images
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # /images/first endpoint has been deprecated in favor of /images?latest=true
+
+  /images/{id}:
+    get:
+      summary: Get image by ID
+      description: Retrieve a specific image by its ID
+      tags:
+        - Images
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID of the image to retrieve
+      responses:
+        "200":
+          description: Image details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Validation error - invalid ID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: Failed to retrieve image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    patch:
+      summary: Update an image
+      description: Update an existing image's details and optionally replace the image file
+      tags:
+        - Images
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID of the image to update
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Updated title of the image
+                author:
+                  type: string
+                  description: Updated author of the image
+                image:
+                  type: string
+                  format: binary
+                  description: New image file to replace the existing one
+      responses:
+        "200":
+          description: Image successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Validation error - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: Failed to update image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      summary: Delete an image
+      description: Delete an image and all its associated comments
+      tags:
+        - Images
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID of the image to delete
+      responses:
+        "204":
+          description: Image successfully deleted
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Validation error - invalid ID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: Failed to delete image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /images/{id}/image:
+    get:
+      summary: Get image file
+      description: Retrieve the actual image file
+      tags:
+        - Images
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID of the image to retrieve
+      responses:
+        "200":
+          description: Image file
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Validation error - invalid ID format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: Failed to retrieve image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /comments:
+    get:
+      summary: Get all comments
+      description: Retrieve all comments across all images, with optional pagination
+      tags:
+        - Comments
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: Maximum number of comments to return
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+          description: Number of comments to skip
+      responses:
+        "200":
+          description: List of comments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Comment"
+        "422":
+          description: Validation error - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: Failed to retrieve comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /comments/{id}:
+    patch:
+      summary: Update a comment
+      description: Update an existing comment
+      tags:
+        - Comments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the comment to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                author:
+                  type: string
+                  description: Updated author of the comment
+                comment:
+                  type: string
+                  description: Updated content of the comment
+      responses:
+        "200":
+          description: Comment successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Failed to update comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      summary: Delete a comment
+      description: Delete a specific comment
+      tags:
+        - Comments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the comment to delete
+      responses:
+        "204":
+          description: Comment successfully deleted
+        "404":
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Failed to delete comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /images/{id}/comments:
+    get:
+      summary: Get comments for an image
+      description: Retrieve paginated comments for a specific image
+      tags:
+        - Comments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID of the image to get comments for
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+          description: Maximum number of comments to return
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Number of comments to skip
+      responses:
+        "200":
+          description: List of comments with pagination info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedComments"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Validation error - invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: Failed to retrieve comments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Add a comment to an image
+      description: Add a new comment to a specific image
+      tags:
+        - Comments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID of the image to comment on
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                author:
+                  type: string
+                  description: Author of the comment
+                comment:
+                  type: string
+                  description: Content of the comment
+              required:
+                - author
+                - comment
+      responses:
+        "201":
+          description: Comment successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "404":
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Validation error - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        "500":
+          description: Failed to create comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Image:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the image
+        title:
+          type: string
+          description: Title of the image
+        author:
+          type: string
+          description: Author of the image
+        image:
+          type: object
+          description: Information about the uploaded image file
+          properties:
+            fieldname:
+              type: string
+            originalname:
+              type: string
+            encoding:
+              type: string
+            mimetype:
+              type: string
+            destination:
+              type: string
+            filename:
+              type: string
+            path:
+              type: string
+            size:
+              type: number
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the image was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the image was last updated
+      required:
+        - id
+        - title
+        - author
+        - image
+
+    ImageWithNavigation:
+      type: object
+      properties:
+        image:
+          $ref: "#/components/schemas/Image"
+        navigation:
+          type: object
+          properties:
+            next:
+              type: string
+              nullable: true
+              description: ID of the next image in the gallery
+            prev:
+              type: string
+              nullable: true
+              description: ID of the previous image in the gallery
+        total:
+          type: integer
+          description: Total number of images in the gallery
+        position:
+          type: integer
+          description: Position of this image in the gallery (1-based)
+      required:
+        - image
+        - navigation
+        - total
+        - position
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the comment
+        author:
+          type: string
+          description: Author of the comment
+        comment:
+          type: string
+          description: Content of the comment
+        ImageId:
+          type: string
+          description: ID of the image this comment is for
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the comment was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the comment was last updated
+      required:
+        - id
+        - author
+        - comment
+        - ImageId
+
+    PaginatedComments:
+      type: object
+      properties:
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
+          description: List of comments for the current page
+        currentPage:
+          type: integer
+          description: Current page number (0-based)
+        totalPages:
+          type: integer
+          description: Total number of pages available
+        totalCount:
+          type: integer
+          description: Total number of comments for the image
+      required:
+        - comments
+        - currentPage
+        - totalPages
+        - totalCount
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+      required:
+        - error

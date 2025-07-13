@@ -1,0 +1,50 @@
+/* all transition, box shadow, hover effects, animations etc. are added by co-pilot with the prompt: */
+/*   "can you make the design more elegant?" */
+
+.gallery {
+  padding: 24px;
+  margin: 24px 0;
+  background-color: var(--gray-light);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.gallery .image-container img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-speed);
+}
+
+.gallery .image-container img:hover {
+  transform: scale(1.01);
+}
+
+.image-count {
+  text-align: right;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--gray-dark);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.image-title {
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+}
+
+.authors-name {
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--primary-dark);
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.gallery .buttons {
+  margin-top: 10px;
+  justify-content: space-between;
+}

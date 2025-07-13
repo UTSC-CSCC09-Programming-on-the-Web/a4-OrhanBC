@@ -1,0 +1,94 @@
+/* all transition, box shadow, hover effects, animations etc. are added by co-pilot with the prompt: */
+/*   "can you make the design more elegant?" */
+
+.comments {
+  padding: 24px;
+  margin: 24px 0;
+  background-color: var(--gray-light);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.comments-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+  letter-spacing: 0.2px;
+}
+.comments-title::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: var(--primary-color);
+  margin-top: 8px;
+  border-radius: 2px;
+}
+
+.comment {
+  border: 1px solid var(--gray-medium);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: white;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-speed),
+    box-shadow var(--transition-speed);
+}
+
+.comment:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.comment .delete-icon {
+  width: 30px;
+  height: 30px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  cursor: pointer;
+}
+
+.comment-info {
+  text-align: center;
+}
+
+.comment-info .author {
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.comment-info .date {
+  font-size: 13px;
+  color: var(--gray-dark);
+  font-weight: 400;
+}
+
+.page-navigator {
+  align-items: center;
+  justify-content: center;
+}
+
+.comments .btn-prev {
+  background-image: url("../media/prev.png");
+  background-color: transparent !important;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 30px;
+  height: 30px;
+}
+
+.comments .btn-next {
+  background-image: url("../media/next.png");
+  background-color: transparent !important;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 30px;
+  height: 30px;
+}
