@@ -15,7 +15,12 @@ import {
 
 import { authenticate } from "../middleware/auth.middleware.js";
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({
+  dest: "uploads/",
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50MB limit
+  },
+});
 
 export const router = Router();
 

@@ -11,8 +11,8 @@ import { router as authRouter } from "./routers/auth-router.js";
 export const app = express();
 const PORT = 3000;
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false, limit: "50mb" }));
+app.use(bodyParser.json({ limit: "50mb" }));
 
 app.use(express.static("static"));
 
@@ -25,8 +25,6 @@ try {
 } catch (error) {
   console.error("Unable to connect to the database:", error);
 }
-
-const upload = multer({ dest: "uploads/" });
 
 app.use("/api/auth", authRouter);
 

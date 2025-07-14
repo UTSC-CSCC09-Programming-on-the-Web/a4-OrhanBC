@@ -231,7 +231,7 @@ const Gallery = (function () {
 
         <div class="form-group">
           <label for="image">Image File</label>
-          <input type="file" id="image" name="image" required />
+          <input type="file" id="image" accept="image/*" name="image" required />
         </div>
 
         <button type="button" class="btn btn-cancel">Cancel</button>
